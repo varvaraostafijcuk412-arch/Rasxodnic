@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Запас · трекер расходников</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F2EFE7;
+    --ink: #2B2A26;
+    --ink-soft: #6B675E;
+    --card: #FFFFFF;
+    --line: #E3DED2;
+    --sage: #6E8259;
+    --sage-soft: #E4E9DB;
+    --amber: #C1863B;
+    --amber-soft: #F3E4CC;
+    --brick: #B0503A;
+    --brick-soft: #F4DAD1;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px;}
+
+  header{margin-bottom:28px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--sage);
+    margin-bottom:6px;
+  }
+  h1{
+    font-family:'Archivo',sans-serif;
+    font-weight:800;
+    font-size:clamp(28px,5vw,40px);
+    margin:0 0 6px;
+    letter-spacing:-0.01em;
+  }
+  .sub{color:var(--ink-soft); font-size:15px; max-width:56ch;}
+
+  .permbar{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    background:var(--card); border:1px solid var(--line); border-radius:10px;
+    padding:12px 16px; margin:20px 0; font-size:14px;
+  }
+  .permbar.on{background:var(--sage-soft); border-color:var(--sage);}
+  .btn{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-weight:600; font-size:14px;
+    border:none; border-radius:8px; padding:9px 16px; cursor:pointer;
+    background:var(--ink); color:#fff;
+  }
+  .btn:hover{opacity:.88;}
+  .btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--line);}
+  .btn.small{padding:6px 11px; font-size:13px;}
+  .btn.danger{background:var(--brick);}
+
+  .panel{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:20px; margin-bottom:26px;
+  }
+  .panel h2{
+    font-family:'Archivo',sans-serif; font-size:17px; margin:0 0 14px;
+  }
+  form{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:12px;}
+  form .full{grid-column:1/-1;}
+  label{display:block; font-size:12px; color:var(--ink-soft); margin-bottom:5px; font-family:'IBM Plex Mono',monospace; letter-spacing:.03em;}
+  input,select{
+    width:100%; padding:9px 10px; border-radius:8px; border:1px solid var(--line);
+    background:#fdfcfa; font-family:'IBM Plex Sans',sans-serif; font-size:14px; color:var(--ink);
+  }
+  input:focus,select:focus{outline:2px solid var(--sage); outline-offset:1px;}
+  form .actions{grid-column:1/-1; display:flex; justify-content:flex-end; gap:10px; margin-top:2px;}
+
+  .summary{display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap;}
+  .chip{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    border:1px solid var(--line); border-radius:999px; padding:6px 13px;
+    background:var(--card);
+  }
+  .chip b{font-family:'Archivo',sans-serif;}
+  .chip.urgent{background:var(--brick-soft); border-color:var(--brick); color:#7a3324;}
+  .chip.soon{background:var(--amber-soft); border-color:var(--amber); color:#7a5220;}
+
+  .list{display:flex; flex-direction:column; gap:12px;}
+  .empty{
+    text-align:center; padding:50px 20px; color:var(--ink-soft);
+    border:1px dashed var(--line); border-radius:14px; font-size:14px;
+  }
+
+  .item{
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:16px 18px; display:grid; grid-template-columns:1fr auto; gap:6px 16px;
+    position:relative; overflow:hidden;
+  }
+  .item::before{
+    content:''; position:absolute; left:0; top:0; bottom:0; width:5px;
+    background:var(--sage);
+  }
+  .item.status-soon::before{background:var(--amber);}
+  .item.status-urgent::before{background:var(--brick);}
+
+  .item-top{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;}
+  .item-name{font-family:'Archivo',sans-serif; font-weight:700; font-size:16px;}
+  .item-cat{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em;}
+  .badge{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; padding:3px 9px; border-radius:999px;
+    background:var(--sage-soft); color:#3f4d33; font-weight:600;
+  }
+  .badge.soon{background:var(--amber-soft); color:#7a5220;}
+  .badge.urgent{background:var(--brick-soft); color:#7a3324;}
+
+  .gauge{
+    grid-column:1/-1; height:7px; border-radius:99px; background:var(--line);
+    overflow:hidden; margin-top:4px;
+  }
+  .gauge-fill{height:100%; background:var(--sage); border-radius:99px;}
+  .status-soon .gauge-fill{background:var(--amber);}
+  .status-urgent .gauge-fill{background:var(--brick);}
+
+  .item-meta{
+    grid-column:1/-1; display:flex; gap:16px; flex-wrap:wrap;
+    font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft); margin-top:2px;
+  }
+  .item-actions{display:flex; gap:8px; align-self:start;}
+
+  footer{margin-top:40px; font-size:12px; color:var(--ink-soft); text-align:center;}
+
+  @media (max-width:640px){
+    form{grid-template-columns:1fr 1fr;}
+    .item{grid-template-columns:1fr;}
+    .item-actions{justify-self:start;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Запас на кухне и в хозблоке</div>
+    <h1>Трекер расходников</h1>
+    <div class="sub">Перчатки, влажные салфетки, порошок, бытовая химия — всё, что заканчивается незаметно. Отмечайте срок использования, а приложение подскажет, когда пора закупаться.</div>
+  </header>
+
+  <div class="panel" id="settingsPanel">
+    <h2>Подключение к таблице</h2>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
+      <div style="flex:1; min-width:240px;">
+        <label for="f-weburl">URL Apps Script Web App</label>
+        <input id="f-weburl" placeholder="https://script.google.com/macros/s/…/exec">
+      </div>
+      <button class="btn" id="saveUrlBtn">Сохранить</button>
+    </div>
+    <div id="connStatus" style="font-size:13px; color:var(--ink-soft); margin-top:8px;"></div>
+  </div>
+
+  <div id="permbar" class="permbar">
+    <span id="permText">Уведомления в браузере выключены — включите, чтобы получать push, пока эта вкладка открыта.</span>
+    <button class="btn" id="permBtn">Включить уведомления</button>
+  </div>
+
+  <div class="panel">
+    <h2 id="formTitle">Добавить расходник</h2>
+    <form id="itemForm">
+      <div>
+        <label for="f-name">Название</label>
+        <input id="f-name" placeholder="Резиновые перчатки" required>
+      </div>
+      <div>
+        <label for="f-cat">Категория</label>
+        <select id="f-cat">
+          <option>Бытовая химия</option>
+          <option>Перчатки</option>
+          <option>Влажные салфетки</option>
+          <option>Порошок / стирка</option>
+          <option>Другое</option>
+        </select>
+      </div>
+      <div>
+        <label for="f-start">Дата покупки</label>
+        <input id="f-start" type="date" required>
+      </div>
+      <div>
+        <label for="f-period">Хватит на</label>
+        <select id="f-period">
+          <option value="1">1 месяц</option>
+          <option value="2">2 месяца</option>
+          <option value="3" selected>3 месяца</option>
+          <option value="5">5 месяцев</option>
+          <option value="6">6 месяцев</option>
+          <option value="custom">Свой срок (дней)</option>
+        </select>
+      </div>
+      <div id="customDaysWrap" style="display:none;">
+        <label for="f-customdays">Срок в днях</label>
+        <input id="f-customdays" type="number" min="1" placeholder="45">
+      </div>
+      <div>
+        <label for="f-notify">Напомнить за</label>
+        <select id="f-notify">
+          <option value="7">7 дней</option>
+          <option value="14" selected>14 дней (2 недели)</option>
+          <option value="21">21 день (3 недели)</option>
+          <option value="30">30 дней</option>
+        </select>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn ghost" id="cancelEdit" style="display:none;">Отменить</button>
+        <button type="submit" class="btn" id="submitBtn">Добавить в трекер</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="summary" id="summary"></div>
+  <div class="list" id="list"></div>
+
+  <footer>Данные хранятся в Google Таблице через Apps Script. Откройте вкладку — приложение проверит запасы и, если разрешено, пришлёт уведомление.</footer>
+</div>
+
+<script>
+const URL_KEY = 'rashodniki_weburl_v1';
+const NOTIFIED_KEY = 'rashodniki_notified_v1'; // только для браузерных push, локально
+
+let items = [];
+let notifiedLog = JSON.parse(localStorage.getItem(NOTIFIED_KEY) || '{}');
+let editingId = null;
+
+const $ = sel => document.querySelector(sel);
+const form = $('#itemForm');
+const periodSelect = $('#f-period');
+const customWrap = $('#customDaysWrap');
+const connStatus = $('#connStatus');
+
+function getWebAppUrl(){
+  return localStorage.getItem(URL_KEY) || '';
+}
+
+$('#f-weburl').value = getWebAppUrl();
+$('#saveUrlBtn').addEventListener('click', () => {
+  const url = $('#f-weburl').value.trim();
+  localStorage.setItem(URL_KEY, url);
+  loadItems();
+});
+
+// default purchase date = today
+$('#f-start').value = new Date().toISOString().slice(0,10);
+
+periodSelect.addEventListener('change', () => {
+  customWrap.style.display = periodSelect.value === 'custom' ? 'block' : 'none';
+});
+
+function daysFromPeriod(){
+  if(periodSelect.value === 'custom'){
+    return parseInt($('#f-customdays').value || '0', 10);
+  }
+  return Math.round(parseFloat(periodSelect.value) * 30.44);
+}
+
+function saveNotified(){
+  localStorage.setItem(NOTIFIED_KEY, JSON.stringify(notifiedLog));
+}
+
+async function loadItems(){
+  const url = getWebAppUrl();
+  if(!url){
+    connStatus.textContent = 'Вставьте URL Apps Script Web App и нажмите «Сохранить» — без него список не сохранится между устройствами.';
+    items = [];
+    render();
+    return;
+  }
+  connStatus.textContent = 'Загрузка…';
+  try{
+    const resp = await fetch(url);
+    const data = await resp.json();
+    if(!data.ok) throw new Error(data.error || 'read_failed');
+    items = data.items;
+    connStatus.textContent = `Подключено. Расходников в таблице: ${items.length}.`;
+    render();
+    checkNotifications();
+  }catch(err){
+    connStatus.textContent = 'Не удалось загрузить таблицу. Проверьте URL и доступ («Anyone» в настройках развёртывания).';
+  }
+}
+
+async function apiPost(payload){
+  const url = getWebAppUrl();
+  if(!url){ alert('Сначала укажите URL Apps Script Web App вверху страницы.'); return {ok:false}; }
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: {'Content-Type':'text/plain;charset=utf-8'},
+    body: JSON.stringify(payload)
+  });
+  return resp.json();
+}
+
+function computeStatus(item){
+  const start = new Date(item.start);
+  const end = new Date(item.end);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const totalDays = Math.max(1, Math.round((end - start) / 86400000));
+  const usedDays = Math.round((today - start) / 86400000);
+  const daysLeft = Math.round((end - today) / 86400000);
+  const pctUsed = Math.min(100, Math.max(0, (usedDays / totalDays) * 100));
+  let status = 'ok';
+  if(daysLeft < 0) status = 'urgent';
+  else if(daysLeft <= item.notify) status = daysLeft <= 3 ? 'urgent' : 'soon';
+  return { daysLeft, pctUsed, status };
+}
+
+function fmtDate(d){
+  return new Date(d).toLocaleDateString('ru-RU', {day:'2-digit', month:'2-digit', year:'numeric'});
+}
+
+function render(){
+  const list = $('#list');
+  const summary = $('#summary');
+  list.innerHTML = '';
+
+  if(items.length === 0){
+    list.innerHTML = '<div class="empty">Пока пусто. Добавьте первый расходник выше — например, влажные салфетки на 2 месяца.</div>';
+    summary.innerHTML = '';
+    return;
+  }
+
+  const enriched = items.map(it => ({ it, ...computeStatus(it) }));
+  enriched.sort((a,b) => a.daysLeft - b.daysLeft);
+
+  const urgentCount = enriched.filter(e => e.status === 'urgent').length;
+  const soonCount = enriched.filter(e => e.status === 'soon').length;
+
+  summary.innerHTML = `
+    <div class="chip"><b>${items.length}</b> в трекере</div>
+    ${urgentCount ? `<div class="chip urgent"><b>${urgentCount}</b> срочно закупить</div>` : ''}
+    ${soonCount ? `<div class="chip soon"><b>${soonCount}</b> скоро понадобится</div>` : ''}
+  `;
+
+  enriched.forEach(({it, daysLeft, pctUsed, status}) => {
+    const el = document.createElement('div');
+    el.className = 'item status-' + status;
+    const badgeText = status === 'urgent'
+      ? (daysLeft < 0 ? `просрочено на ${Math.abs(daysLeft)} дн.` : `осталось ${daysLeft} дн.`)
+      : `осталось ${daysLeft} дн.`;
+    const badgeClass = status === 'urgent' ? 'urgent' : status === 'soon' ? 'soon' : '';
+
+    el.innerHTML = `
+      <div class="item-top">
+        <span class="item-name">${escapeHtml(it.name)}</span>
+        <span class="item-cat">${escapeHtml(it.cat)}</span>
+        <span class="badge ${badgeClass}">${badgeText}</span>
+      </div>
+      <div class="item-actions">
+        <button class="btn ghost small" data-edit="${it.id}">Изменить</button>
+        <button class="btn danger small" data-del="${it.id}">Удалить</button>
+      </div>
+      <div class="gauge"><div class="gauge-fill" style="width:${pctUsed.toFixed(0)}%"></div></div>
+      <div class="item-meta">
+        <span>куплено ${fmtDate(it.start)}</span>
+        <span>хватит до ${fmtDate(it.end)}</span>
+        <span>напоминание за ${it.notify} дн.</span>
+      </div>
+    `;
+    list.appendChild(el);
+  });
+
+  list.querySelectorAll('[data-del]').forEach(btn=>{
+    btn.addEventListener('click', async () => {
+      if(confirm('Удалить расходник из трекера?')){
+        const res = await apiPost({action:'delete', id: btn.dataset.del});
+        if(res.ok){
+          items = items.filter(i => i.id !== btn.dataset.del);
+          render();
+        } else {
+          alert('Не получилось удалить, попробуйте ещё раз.');
+        }
+      }
+    });
+  });
+  list.querySelectorAll('[data-edit]').forEach(btn=>{
+    btn.addEventListener('click', () => startEdit(btn.dataset.edit));
+  });
+}
+
+function escapeHtml(s){
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function startEdit(id){
+  const it = items.find(i => i.id === id);
+  if(!it) return;
+  editingId = id;
+  $('#f-name').value = it.name;
+  $('#f-cat').value = it.cat;
+  $('#f-start').value = it.start;
+  $('#f-notify').value = String(it.notify);
+  periodSelect.value = 'custom';
+  customWrap.style.display = 'block';
+  const totalDays = Math.round((new Date(it.end) - new Date(it.start)) / 86400000);
+  $('#f-customdays').value = totalDays;
+  $('#formTitle').textContent = 'Изменить расходник';
+  $('#submitBtn').textContent = 'Сохранить изменения';
+  $('#cancelEdit').style.display = 'inline-block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function resetForm(){
+  editingId = null;
+  form.reset();
+  $('#f-start').value = new Date().toISOString().slice(0,10);
+  periodSelect.value = '3';
+  customWrap.style.display = 'none';
+  $('#formTitle').textContent = 'Добавить расходник';
+  $('#submitBtn').textContent = 'Добавить в трекер';
+  $('#cancelEdit').style.display = 'none';
+}
+
+$('#cancelEdit').addEventListener('click', resetForm);
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = $('#f-name').value.trim();
+  const cat = $('#f-cat').value;
+  const start = $('#f-start').value;
+  const notify = parseInt($('#f-notify').value, 10);
+  const days = daysFromPeriod();
+  if(!name || !start || !days || days < 1){
+    alert('Проверьте поля: нужно название, дата покупки и срок использования больше 0 дней.');
+    return;
+  }
+  const end = new Date(start);
+  end.setDate(end.getDate() + days);
+  const endStr = end.toISOString().slice(0,10);
+
+  const submitBtn = $('#submitBtn');
+  submitBtn.disabled = true;
+
+  if(editingId){
+    const it = items.find(i => i.id === editingId);
+    const updated = {...it, name, cat, start, end: endStr, notify};
+    const res = await apiPost({action:'update', item: updated});
+    if(res.ok) Object.assign(it, updated);
+    else alert('Не получилось сохранить изменения.');
+  } else {
+    const res = await apiPost({action:'add', item:{name, cat, start, end: endStr, notify}});
+    if(res.ok) items.push({ id: res.id, name, cat, start, end: endStr, notify, lastNotified:'' });
+    else alert('Не получилось добавить расходник.');
+  }
+  submitBtn.disabled = false;
+  resetForm();
+  render();
+  checkNotifications();
+});
+
+// --- Notifications ---
+const permbar = $('#permbar');
+const permBtn = $('#permBtn');
+const permText = $('#permText');
+
+function refreshPermUI(){
+  if(!('Notification' in window)){
+    permText.textContent = 'Этот браузер не поддерживает уведомления.';
+    permBtn.style.display = 'none';
+    return;
+  }
+  if(Notification.permission === 'granted'){
+    permbar.classList.add('on');
+    permText.textContent = 'Уведомления включены — проверяем запасы при каждом открытии вкладки.';
+    permBtn.style.display = 'none';
+  } else if(Notification.permission === 'denied'){
+    permText.textContent = 'Уведомления заблокированы в настройках браузера. Разрешите их в настройках сайта, чтобы получать напоминания.';
+    permBtn.style.display = 'none';
+  } else {
+    permText.textContent = 'Уведомления в браузере выключены — включите, чтобы получать push, пока эта вкладка открыта.';
+    permBtn.style.display = 'inline-block';
+  }
+}
+
+permBtn.addEventListener('click', () => {
+  Notification.requestPermission().then(() => {
+    refreshPermUI();
+    checkNotifications(true);
+  });
+});
+
+function checkNotifications(force){
+  if(!('Notification' in window) || Notification.permission !== 'granted') return;
+  const today = new Date().toISOString().slice(0,10);
+  items.forEach(it => {
+    const { daysLeft, status } = computeStatus(it);
+    if(status === 'ok') return;
+    const lastNotified = notifiedLog[it.id];
+    if(!force && lastNotified === today) return; // one notification per item per day
+    const body = daysLeft < 0
+      ? `«${it.name}» уже должно было закончиться ${Math.abs(daysLeft)} дн. назад.`
+      : `«${it.name}» закончится примерно через ${daysLeft} дн. Пора закупиться.`;
+    new Notification('Пора пополнить запас', { body });
+    notifiedLog[it.id] = today;
+  });
+  saveNotified();
+}
+
+refreshPermUI();
+loadItems();
+setInterval(checkNotifications, 60 * 60 * 1000); // re-check hourly while tab stays open
+</script>
+</body>
+</html>
