@@ -244,8 +244,8 @@
         </select>
       </div>
       <div class="actions">
-        <button type="button" class="btn ghost" id="cancelEdit" style="display:none;">${'<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>'}Отменить</button>
-        <button type="submit" class="btn" id="submitBtn">${'<svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>'}<span id="submitBtnLabel">Добавить в трекер</span></button>
+        <button type="button" class="btn ghost" id="cancelEdit" style="display:none;"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>Отменить</button>
+        <button type="submit" class="btn" id="submitBtn"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg><span id="submitBtnLabel">Добавить в трекер</span></button>
       </div>
     </form>
   </div>
@@ -273,7 +273,7 @@ const ICONS = {
 };
 
 const URL_KEY = 'rashodniki_weburl_v1';
-const NOTIFIED_KEY = 'rashodniki_notified_v1';
+const NOTIFIED_KEY = 'rashodniki_notified_v1'; // только для браузерных push, локально
 const DEFAULT_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxVtlqIfomZKKVkOijrrfzxyOiDl834Zi_LI2UzBkzpsnrnXVVgEmFqRDARmwu6o3VK/exec';
 
 let items = [];
@@ -297,6 +297,7 @@ $('#saveUrlBtn').addEventListener('click', () => {
   loadItems();
 });
 
+// default purchase date = today
 $('#f-start').value = new Date().toISOString().slice(0,10);
 
 periodSelect.addEventListener('change', () => {
@@ -317,7 +318,7 @@ function saveNotified(){
 async function loadItems(){
   const url = getWebAppUrl();
   if(!url){
-    connStatus.textContent = 'Вставьте URL Apps Script Web App и нажмите «Сохранить».';
+    connStatus.textContent = 'Вставьте URL Apps Script Web App и нажмите «Сохранить» — без него список не сохранится между устройствами.';
     items = [];
     render();
     return;
@@ -375,7 +376,7 @@ function render(){
   list.innerHTML = '';
 
   if(items.length === 0){
-    list.innerHTML = '<div class="empty">Пока пусто. Добавьте первый расходник выше.</div>';
+    list.innerHTML = '<div class="empty">Пока пусто. Добавьте первый расходник выше — например, влажные салфетки на 2 месяца.</div>';
     summary.innerHTML = '';
     return;
   }
@@ -397,7 +398,9 @@ function render(){
     el.className = 'item status-' + status;
     const badgeText = status === 'urgent'
       ? (daysLeft < 0 ? `просрочено на ${Math.abs(daysLeft)} дн.` : `осталось ${daysLeft} дн.`)
-      : `осталось ${daysLeft} дн.`;
+      : status === 'soon'
+        ? `осталось ${daysLeft} дн.`
+        : `осталось ${daysLeft} дн.`;
     const badgeClass = status === 'urgent' ? 'urgent' : status === 'soon' ? 'soon' : '';
 
     el.innerHTML = `
@@ -510,6 +513,7 @@ form.addEventListener('submit', async (e) => {
   checkNotifications();
 });
 
+// --- Notifications ---
 const permbar = $('#permbar');
 const permBtn = $('#permBtn');
 const permText = $('#permText');
@@ -522,13 +526,13 @@ function refreshPermUI(){
   }
   if(Notification.permission === 'granted'){
     permbar.classList.add('on');
-    permText.textContent = 'Уведомления включены.';
+    permText.textContent = 'Уведомления включены — проверяем запасы при каждом открытии вкладки.';
     permBtn.style.display = 'none';
   } else if(Notification.permission === 'denied'){
-    permText.textContent = 'Уведомления заблокированы в настройках браузера.';
+    permText.textContent = 'Уведомления заблокированы в настройках браузера. Разрешите их в настройках сайта, чтобы получать напоминания.';
     permBtn.style.display = 'none';
   } else {
-    permText.textContent = 'Уведомления в браузере выключены.';
+    permText.textContent = 'Уведомления в браузере выключены — включите, чтобы получать push, пока эта вкладка открыта.';
     permBtn.style.display = 'inline-block';
   }
 }
@@ -547,10 +551,10 @@ function checkNotifications(force){
     const { daysLeft, status } = computeStatus(it);
     if(status === 'ok') return;
     const lastNotified = notifiedLog[it.id];
-    if(!force && lastNotified === today) return;
+    if(!force && lastNotified === today) return; // one notification per item per day
     const body = daysLeft < 0
       ? `«${it.name}» уже должно было закончиться ${Math.abs(daysLeft)} дн. назад.`
-      : `«${it.name}» закончится примерно через ${daysLeft} дн.`;
+      : `«${it.name}» закончится примерно через ${daysLeft} дн. Пора закупиться.`;
     new Notification('Пора пополнить запас', { body });
     notifiedLog[it.id] = today;
   });
@@ -559,7 +563,7 @@ function checkNotifications(force){
 
 refreshPermUI();
 loadItems();
-setInterval(checkNotifications, 60 * 60 * 1000);
+setInterval(checkNotifications, 60 * 60 * 1000); // re-check hourly while tab stays open
 </script>
 </body>
 </html>
