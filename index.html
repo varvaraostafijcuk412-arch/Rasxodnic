@@ -5,155 +5,165 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Запас · трекер расходников</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --cream: #FBF3EC;
-    --pink: #F6A9C6;
-    --pink-deep: #EE7FAE;
-    --pink-soft: #FCE3ED;
-    --kale: #6E8C3F;
-    --kale-deep: #567030;
-    --kale-soft: #E3EAD3;
-    --ink: #2E2A22;
-    --ink-soft: #8A7F72;
+    --bg: #FCEEF2;
+    --ink: #3A2E2E;
+    --ink-soft: #8A7B7B;
     --card: #FFFFFF;
-    --line: #F0DCE3;
-    --peach: #E8A15C;
-    --peach-soft: #FBEAD3;
-    --berry: #D9557C;
-    --berry-soft: #FBDCE7;
+    --line: #F3D9E2;
+    --pink: #EE7FA9;
+    --pink-deep: #E15C8C;
+    --pink-soft: #FCE1EB;
+    --green: #6FA84B;
+    --green-deep: #5C8F3C;
+    --green-soft: #E4F0DA;
+    --amber: #E0A23A;
+    --amber-soft: #FBEBCF;
+    --brick: #E0623F;
+    --brick-soft: #FBDDD2;
   }
   *{box-sizing:border-box;}
   body{
     margin:0;
-    background:var(--cream);
-    background-image:
-      radial-gradient(circle at 8% 4%, var(--pink-soft) 0%, transparent 42%),
-      radial-gradient(circle at 96% 18%, var(--kale-soft) 0%, transparent 38%);
+    background:var(--bg);
     color:var(--ink);
-    font-family:'Manrope', sans-serif;
+    font-family:'Nunito', sans-serif;
     -webkit-font-smoothing:antialiased;
   }
-  .wrap{max-width:920px;margin:0 auto;padding:32px 20px 90px;}
+  .wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px;}
 
-  header{margin-bottom:30px; position:relative;}
+  header{margin-bottom:28px; position:relative;}
   .eyebrow{
     display:inline-block;
-    font-family:'Space Mono',monospace;
+    font-family:'Nunito',sans-serif;
+    font-weight:800;
     font-size:12px;
     letter-spacing:.08em;
     text-transform:uppercase;
-    color:var(--kale-deep);
-    background:var(--kale-soft);
-    border-radius:999px;
+    color:var(--pink-deep);
+    background:var(--pink-soft);
     padding:5px 14px;
+    border-radius:999px;
     margin-bottom:12px;
-    transform:rotate(-1.5deg);
+    transform:rotate(-2deg);
   }
   h1{
-    font-family:'Baloo 2',sans-serif;
-    font-weight:800;
-    font-size:clamp(34px,6vw,52px);
-    margin:0 0 10px;
+    font-family:'Fredoka',sans-serif;
+    font-weight:700;
+    font-size:clamp(34px,7vw,52px);
+    margin:0 0 8px;
     letter-spacing:-0.01em;
-    color:var(--kale-deep);
-    line-height:1.02;
+    color:var(--green-deep);
   }
-  .sub{color:var(--ink-soft); font-size:15.5px; max-width:56ch; line-height:1.5;}
+  .sub{color:var(--ink-soft); font-size:15.5px; max-width:56ch; font-weight:600;}
 
   .permbar{
     display:flex; align-items:center; justify-content:space-between; gap:12px;
-    background:var(--card); border:2px solid var(--pink-soft); border-radius:16px;
-    padding:13px 18px; margin:22px 0; font-size:14px; box-shadow:0 3px 0 var(--pink-soft);
+    background:var(--card); border:2px solid var(--line); border-radius:18px;
+    padding:14px 18px; margin:20px 0; font-size:14px; font-weight:600;
   }
-  .permbar.on{background:var(--kale-soft); border-color:var(--kale-soft); box-shadow:0 3px 0 #d3ddc0;}
+  .permbar.on{background:var(--green-soft); border-color:var(--green);}
   .btn{
-    font-family:'Manrope',sans-serif;
-    font-weight:700; font-size:14px;
-    border:none; border-radius:999px; padding:10px 20px; cursor:pointer;
-    background:var(--kale); color:#fff;
-    box-shadow:0 3px 0 var(--kale-deep);
-    transition:transform .12s ease, box-shadow .12s ease;
+    font-family:'Fredoka',sans-serif;
+    font-weight:600; font-size:14.5px;
+    border:none; border-radius:999px; padding:11px 20px; cursor:pointer;
+    background:var(--green); color:#fff;
+    display:inline-flex; align-items:center; gap:6px;
+    box-shadow:0 3px 0 var(--green-deep);
+    transition:transform .08s;
   }
-  .btn:hover{transform:translateY(-1px);}
-  .btn:active{transform:translateY(1px); box-shadow:0 1px 0 var(--kale-deep);}
-  .btn.ghost{background:var(--card); color:var(--ink); border:2px solid var(--line); box-shadow:none; padding:8px 18px;}
-  .btn.ghost:active{transform:translateY(1px);}
-  .btn.small{padding:7px 14px; font-size:13px;}
-  .btn.danger{background:var(--berry); box-shadow:0 3px 0 #a83e60;}
+  .btn:active{transform:translateY(2px); box-shadow:0 1px 0 var(--green-deep);}
+  .btn:hover{filter:brightness(1.04);}
+  .btn.ghost{background:#fff; color:var(--ink); border:2px solid var(--line); box-shadow:none; padding:9px 18px;}
+  .btn.small{padding:7px 14px; font-size:13px; box-shadow:0 2px 0 rgba(0,0,0,.12);}
+  .btn.danger{background:var(--brick); box-shadow:0 3px 0 #a8492c;}
+  .btn.ghost.small{box-shadow:none;}
 
   .panel{
-    background:var(--card); border:2px solid var(--pink-soft); border-radius:20px;
-    padding:22px; margin-bottom:28px; box-shadow:0 4px 0 var(--pink-soft);
+    background:var(--card); border:2px solid var(--line); border-radius:22px;
+    padding:22px; margin-bottom:26px;
   }
   .panel h2{
-    font-family:'Baloo 2',sans-serif; font-weight:700; font-size:19px; margin:0 0 16px; color:var(--kale-deep);
+    font-family:'Fredoka',sans-serif; font-size:19px; margin:0 0 14px; color:var(--green-deep);
   }
-  form{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:14px;}
+  form{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:12px;}
   form .full{grid-column:1/-1;}
-  label{display:block; font-size:12px; color:var(--ink-soft); margin-bottom:6px; font-family:'Space Mono',monospace; letter-spacing:.02em;}
+  label{display:block; font-size:11.5px; color:var(--ink-soft); margin-bottom:5px; font-weight:800; letter-spacing:.04em; text-transform:uppercase;}
   input,select{
     width:100%; padding:10px 12px; border-radius:12px; border:2px solid var(--line);
-    background:#fffdfb; font-family:'Manrope',sans-serif; font-size:14px; color:var(--ink);
+    background:#fffaf9; font-family:'Nunito',sans-serif; font-weight:600; font-size:14px; color:var(--ink);
   }
   input:focus,select:focus{outline:none; border-color:var(--pink);}
   form .actions{grid-column:1/-1; display:flex; justify-content:flex-end; gap:10px; margin-top:2px;}
 
-  .summary{display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;}
+  .summary{display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap;}
   .chip{
-    font-family:'Space Mono',monospace; font-size:12.5px;
+    font-family:'Fredoka',sans-serif; font-weight:600; font-size:13px;
     border:2px solid var(--line); border-radius:999px; padding:7px 15px;
     background:var(--card);
   }
-  .chip b{font-family:'Baloo 2',sans-serif;}
-  .chip.urgent{background:var(--berry-soft); border-color:var(--berry); color:#9c3457;}
-  .chip.soon{background:var(--peach-soft); border-color:var(--peach); color:#8a5a24;}
+  .chip b{font-weight:700;}
+  .chip.urgent{background:var(--brick-soft); border-color:var(--brick); color:#a8492c;}
+  .chip.soon{background:var(--amber-soft); border-color:var(--amber); color:#8a6420;}
 
   .list{display:flex; flex-direction:column; gap:14px;}
   .empty{
-    text-align:center; padding:56px 20px; color:var(--ink-soft);
-    border:2px dashed var(--pink); border-radius:20px; font-size:14.5px;
-    background:var(--card);
+    text-align:center; padding:50px 20px; color:var(--ink-soft);
+    border:2px dashed var(--line); border-radius:20px; font-size:14px; font-weight:600;
   }
 
   .item{
-    background:var(--card); border:2px solid var(--line); border-radius:18px;
+    background:var(--card); border:2px solid var(--line); border-radius:20px;
     padding:18px 20px; display:grid; grid-template-columns:1fr auto; gap:8px 16px;
     position:relative; overflow:hidden;
   }
   .item::before{
     content:''; position:absolute; left:0; top:0; bottom:0; width:6px;
-    background:var(--kale); border-radius:0 4px 4px 0;
+    background:var(--green);
   }
-  .item.status-soon::before{background:var(--peach);}
-  .item.status-urgent::before{background:var(--berry);}
+  .item.status-soon::before{background:var(--amber);}
+  .item.status-urgent::before{background:var(--brick);}
 
   .item-top{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
-  .item-name{font-family:'Baloo 2',sans-serif; font-weight:700; font-size:17px; color:var(--ink);}
-  .item-cat{font-family:'Space Mono',monospace; font-size:11.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em; background:var(--cream); border-radius:999px; padding:3px 10px;}
-  .badge{
-    font-family:'Space Mono',monospace; font-size:11px; padding:4px 11px; border-radius:999px;
-    background:var(--kale-soft); color:#3f5324; font-weight:700;
+  .item-name{font-family:'Fredoka',sans-serif; font-weight:600; font-size:17px;}
+  .item-cat{
+    font-family:'Nunito',sans-serif; font-weight:800; font-size:11.5px; color:var(--green-deep);
+    text-transform:uppercase; letter-spacing:.03em;
+    background:var(--green-soft); padding:4px 11px; border-radius:999px;
   }
-  .badge.soon{background:var(--peach-soft); color:#8a5a24;}
-  .badge.urgent{background:var(--berry-soft); color:#9c3457;}
+  .item-cat.cat-Перчатки{background:var(--pink-soft); color:var(--pink-deep);}
+  .item-cat.cat-Влажные-салфетки{background:#DDEBFA; color:#3A70A8;}
+  .item-cat.cat-Порошок-стирка{background:var(--green-soft); color:var(--green-deep);}
+  .item-cat.cat-Бытовая-химия{background:#EEE1F7; color:#7A4FA0;}
+  .item-cat.cat-Другое{background:#EEE9E2; color:#7A6E5C;}
+
+  .badge{
+    font-family:'Fredoka',sans-serif; font-weight:600; font-size:11.5px; padding:4px 12px; border-radius:999px;
+    background:var(--green-soft); color:var(--green-deep);
+  }
+  .badge.soon{background:var(--amber-soft); color:#8a6420;}
+  .badge.urgent{background:var(--brick-soft); color:#a8492c;}
 
   .gauge{
-    grid-column:1/-1; height:8px; border-radius:99px; background:var(--cream);
+    grid-column:1/-1; height:9px; border-radius:99px; background:var(--line);
     overflow:hidden; margin-top:4px;
   }
-  .gauge-fill{height:100%; background:var(--kale); border-radius:99px;}
-  .status-soon .gauge-fill{background:var(--peach);}
-  .status-urgent .gauge-fill{background:var(--berry);}
+  .gauge-fill{height:100%; background:var(--green); border-radius:99px;}
+  .status-soon .gauge-fill{background:var(--amber);}
+  .status-urgent .gauge-fill{background:var(--brick);}
 
   .item-meta{
     grid-column:1/-1; display:flex; gap:16px; flex-wrap:wrap;
-    font-family:'Space Mono',monospace; font-size:12px; color:var(--ink-soft); margin-top:2px;
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--ink-soft); margin-top:2px; font-weight:500;
   }
   .item-actions{display:flex; gap:8px; align-self:start;}
+  .icon{width:14px; height:14px; flex-shrink:0;}
+  .icon-lg{width:17px; height:17px;}
+  .cat-icon{width:15px; height:15px; vertical-align:-3px; margin-right:2px;}
 
-  footer{margin-top:44px; font-size:12.5px; color:var(--ink-soft); text-align:center;}
+  footer{margin-top:40px; font-size:12px; color:var(--ink-soft); text-align:center; font-weight:600;}
 
   @media (max-width:640px){
     form{grid-template-columns:1fr 1fr;}
@@ -234,8 +244,8 @@
         </select>
       </div>
       <div class="actions">
-        <button type="button" class="btn ghost" id="cancelEdit" style="display:none;">Отменить</button>
-        <button type="submit" class="btn" id="submitBtn">Добавить в трекер</button>
+        <button type="button" class="btn ghost" id="cancelEdit" style="display:none;"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>Отменить</button>
+        <button type="submit" class="btn" id="submitBtn"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg><span id="submitBtnLabel">Добавить в трекер</span></button>
       </div>
     </form>
   </div>
@@ -247,8 +257,24 @@
 </div>
 
 <script>
+const ICONS = {
+  cat: {
+    'Бытовая химия': '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h4"/><path d="M10 3v3"/><path d="M14 6h3l2 2-2 1"/><rect x="6" y="9" width="8" height="12" rx="2"/></svg>',
+    'Перчатки': '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10V6a2 2 0 1 1 4 0v2"/><path d="M11 8V5a2 2 0 1 1 4 0v3"/><path d="M15 8a2 2 0 1 1 4 0v6a6 6 0 0 1-6 6h-3a5 5 0 0 1-5-5v-4a2 2 0 1 1 4 0v1"/></svg>',
+    'Влажные салфетки': '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8 8c1-3 2-4 4-4s3 1 4 4"/></svg>',
+    'Порошок / стирка': '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="13" r="5"/><circle cx="12" cy="13" r="1.6"/></svg>',
+    'Другое': '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8l9 5 9-5Z"/><path d="M3 8v9l9 5 9-5V8"/><path d="M12 13v9"/></svg>'
+  },
+  edit: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+  trash: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>',
+  plus: '<svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>',
+  check: '<svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+  x: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>'
+};
+
 const URL_KEY = 'rashodniki_weburl_v1';
 const NOTIFIED_KEY = 'rashodniki_notified_v1'; // только для браузерных push, локально
+const DEFAULT_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxVtlqIfomZKKVkOijrrfzxyOiDl834Zi_LI2UzBkzpsnrnXVVgEmFqRDARmwu6o3VK/exec';
 
 let items = [];
 let notifiedLog = JSON.parse(localStorage.getItem(NOTIFIED_KEY) || '{}');
@@ -261,7 +287,7 @@ const customWrap = $('#customDaysWrap');
 const connStatus = $('#connStatus');
 
 function getWebAppUrl(){
-  return localStorage.getItem(URL_KEY) || '';
+  return '/api/items';
 }
 
 $('#f-weburl').value = getWebAppUrl();
@@ -307,7 +333,7 @@ async function loadItems(){
     render();
     checkNotifications();
   }catch(err){
-    connStatus.textContent = 'Не удалось загрузить таблицу. Проверьте URL и доступ («Anyone» в настройках развёртывания).';
+    connStatus.textContent = 'Не удалось загрузить таблицу: ' + (err && err.message ? err.message : String(err));
   }
 }
 
@@ -334,6 +360,10 @@ function computeStatus(item){
   if(daysLeft < 0) status = 'urgent';
   else if(daysLeft <= item.notify) status = daysLeft <= 3 ? 'urgent' : 'soon';
   return { daysLeft, pctUsed, status };
+}
+
+function catClass(cat){
+  return 'cat-' + String(cat).replace(/[\s/]+/g, '-').replace(/-+$/,'');
 }
 
 function fmtDate(d){
@@ -376,12 +406,12 @@ function render(){
     el.innerHTML = `
       <div class="item-top">
         <span class="item-name">${escapeHtml(it.name)}</span>
-        <span class="item-cat">${escapeHtml(it.cat)}</span>
+        <span class="item-cat ${catClass(it.cat)}">${ICONS.cat[it.cat] || ICONS.cat['Другое']}${escapeHtml(it.cat)}</span>
         <span class="badge ${badgeClass}">${badgeText}</span>
       </div>
       <div class="item-actions">
-        <button class="btn ghost small" data-edit="${it.id}">Изменить</button>
-        <button class="btn danger small" data-del="${it.id}">Удалить</button>
+        <button class="btn ghost small" data-edit="${it.id}">${ICONS.edit}Изменить</button>
+        <button class="btn danger small" data-del="${it.id}">${ICONS.trash}Удалить</button>
       </div>
       <div class="gauge"><div class="gauge-fill" style="width:${pctUsed.toFixed(0)}%"></div></div>
       <div class="item-meta">
@@ -430,7 +460,7 @@ function startEdit(id){
   const totalDays = Math.round((new Date(it.end) - new Date(it.start)) / 86400000);
   $('#f-customdays').value = totalDays;
   $('#formTitle').textContent = 'Изменить расходник';
-  $('#submitBtn').textContent = 'Сохранить изменения';
+  $('#submitBtn').innerHTML = ICONS.check + '<span id="submitBtnLabel">Сохранить изменения</span>';
   $('#cancelEdit').style.display = 'inline-block';
   window.scrollTo({top:0, behavior:'smooth'});
 }
@@ -442,7 +472,7 @@ function resetForm(){
   periodSelect.value = '3';
   customWrap.style.display = 'none';
   $('#formTitle').textContent = 'Добавить расходник';
-  $('#submitBtn').textContent = 'Добавить в трекер';
+  $('#submitBtn').innerHTML = ICONS.plus + '<span id="submitBtnLabel">Добавить в трекер</span>';
   $('#cancelEdit').style.display = 'none';
 }
 
