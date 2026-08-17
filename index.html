@@ -224,12 +224,13 @@
   <div class="summary" id="summary"></div>
   <div class="list" id="list"></div>
 
-  <footer>Данные хранятся в Google Таблице через Apps Script. Откройте вкладку — приложение проверит запасы и, если разрешено, пришлёт уведомление.</footer>
+  <footer>Данные хранятся в Google Таблице через Apps Script.</footer>
 </div>
 
 <script>
 const URL_KEY = 'rashodniki_weburl_v1';
-const NOTIFIED_KEY = 'rashodniki_notified_v1'; // только для браузерных push, локально
+const NOTIFIED_KEY = 'rashodniki_notified_v1';
+const DEFAULT_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxVtlqIfomZKKVkOijrrfzxyOiDl834Zi_LI2UzBkzpsnrnXVVgEmFqRDARmwu6o3VK/exec';
 
 let items = [];
 let notifiedLog = JSON.parse(localStorage.getItem(NOTIFIED_KEY) || '{}');
@@ -242,7 +243,7 @@ const customWrap = $('#customDaysWrap');
 const connStatus = $('#connStatus');
 
 function getWebAppUrl(){
-  return localStorage.getItem(URL_KEY) || '';
+  return localStorage.getItem(URL_KEY) || DEFAULT_WEBAPP_URL;
 }
 
 $('#f-weburl').value = getWebAppUrl();
@@ -252,7 +253,6 @@ $('#saveUrlBtn').addEventListener('click', () => {
   loadItems();
 });
 
-// default purchase date = today
 $('#f-start').value = new Date().toISOString().slice(0,10);
 
 periodSelect.addEventListener('change', () => {
@@ -273,7 +273,7 @@ function saveNotified(){
 async function loadItems(){
   const url = getWebAppUrl();
   if(!url){
-    connStatus.textContent = 'Вставьте URL Apps Script Web App и нажмите «Сохранить» — без него список не сохранится между устройствами.';
+    connStatus.textContent = 'Вставьте URL Apps Script Web App и нажмите «Сохранить».';
     items = [];
     render();
     return;
@@ -288,7 +288,7 @@ async function loadItems(){
     render();
     checkNotifications();
   }catch(err){
-    connStatus.textContent = 'Не удалось загрузить таблицу. Проверьте URL и доступ («Anyone» в настройках развёртывания).';
+    connStatus.textContent = 'Не удалось загрузить таблицу: ' + (err && err.message ? err.message : String(err));
   }
 }
 
@@ -327,7 +327,7 @@ function render(){
   list.innerHTML = '';
 
   if(items.length === 0){
-    list.innerHTML = '<div class="empty">Пока пусто. Добавьте первый расходник выше — например, влажные салфетки на 2 месяца.</div>';
+    list.innerHTML = '<div class="empty">Пока пусто. Добавьте первый расходник выше.</div>';
     summary.innerHTML = '';
     return;
   }
@@ -462,7 +462,6 @@ form.addEventListener('submit', async (e) => {
   checkNotifications();
 });
 
-// --- Notifications ---
 const permbar = $('#permbar');
 const permBtn = $('#permBtn');
 const permText = $('#permText');
@@ -475,13 +474,13 @@ function refreshPermUI(){
   }
   if(Notification.permission === 'granted'){
     permbar.classList.add('on');
-    permText.textContent = 'Уведомления включены — проверяем запасы при каждом открытии вкладки.';
+    permText.textContent = 'Уведомления включены.';
     permBtn.style.display = 'none';
   } else if(Notification.permission === 'denied'){
-    permText.textContent = 'Уведомления заблокированы в настройках браузера. Разрешите их в настройках сайта, чтобы получать напоминания.';
+    permText.textContent = 'Уведомления заблокированы в настройках браузера.';
     permBtn.style.display = 'none';
   } else {
-    permText.textContent = 'Уведомления в браузере выключены — включите, чтобы получать push, пока эта вкладка открыта.';
+    permText.textContent = 'Уведомления в браузере выключены.';
     permBtn.style.display = 'inline-block';
   }
 }
@@ -500,10 +499,10 @@ function checkNotifications(force){
     const { daysLeft, status } = computeStatus(it);
     if(status === 'ok') return;
     const lastNotified = notifiedLog[it.id];
-    if(!force && lastNotified === today) return; // one notification per item per day
+    if(!force && lastNotified === today) return;
     const body = daysLeft < 0
       ? `«${it.name}» уже должно было закончиться ${Math.abs(daysLeft)} дн. назад.`
-      : `«${it.name}» закончится примерно через ${daysLeft} дн. Пора закупиться.`;
+      : `«${it.name}» закончится примерно через ${daysLeft} дн.`;
     new Notification('Пора пополнить запас', { body });
     notifiedLog[it.id] = today;
   });
@@ -512,7 +511,7 @@ function checkNotifications(force){
 
 refreshPermUI();
 loadItems();
-setInterval(checkNotifications, 60 * 60 * 1000); // re-check hourly while tab stays open
+setInterval(checkNotifications, 60 * 60 * 1000);
 </script>
 </body>
 </html>
